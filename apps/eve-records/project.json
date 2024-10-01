@@ -1,0 +1,9 @@
+{
+  "name": "eve-records",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/eve-records",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project eve-records --web",
+  "targets": {}
+}
