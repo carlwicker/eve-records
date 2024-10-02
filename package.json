@@ -5,8 +5,6 @@
   "scripts": {},
   "private": true,
   "dependencies": {
-    "@next/eslint-plugin-next": "^14.2.14",
-    "@studio-freight/react-lenis": "^0.0.47",
     "gsap": "^3.12.5",
     "lenis": "^1.1.13",
     "locomotive-scroll": "^5.0.0-beta.21",
@@ -33,7 +31,7 @@
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.13",
     "babel-jest": "^29.7.0",
-    "eslint": "^9.8.0",
+    "eslint": "^8.0.0",
     "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "2.30.0",
