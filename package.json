@@ -2,7 +2,10 @@
   "name": "@eve-records/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "npx nx run eve-records:dev",
+    "build": "npx nx build eve-records --prod"
+  },
   "private": true,
   "dependencies": {
     "gsap": "^3.12.5",
