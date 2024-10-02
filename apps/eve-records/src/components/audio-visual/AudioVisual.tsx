@@ -38,9 +38,12 @@ export default function AudioVisual({
     const dataArray = new Uint8Array(bufferLength);
 
     // Create cubes for different frequency ranges
-    const numCubes = 16; // Number of cubes
+    const numCubes = 10; // Number of cubes
     const cubes: any = [];
     const segmentSize = Math.floor(bufferLength / numCubes);
+
+    // Calculate the total width of the group of cubes
+    const totalWidth = (numCubes - 1) * 2;
 
     for (let i = 0; i < numCubes; i++) {
       const geometry = new THREE.BoxGeometry();
@@ -49,7 +52,7 @@ export default function AudioVisual({
         emissive: 0x000000,
       });
       const cube = new THREE.Mesh(geometry, material);
-      cube.position.x = i * 2 - (numCubes - 1); // Position cubes in a row
+      cube.position.x = i * 2 - totalWidth; // Center the group of cubes
       scene.add(cube);
       cubes.push(cube);
     }
@@ -59,8 +62,10 @@ export default function AudioVisual({
     const centralCube = cubes[centralCubeIndex];
 
     // Position the camera and point it at the central cube
-    camera.position.z = 20;
-    camera.lookAt(centralCube.position);
+    camera.position.z = 0;
+    camera.position.y = 0.3;
+    camera.position.x = centralCube.position.x - -10;
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Set up the bloom effect
     const renderScene = new RenderPass(scene, camera);
@@ -70,9 +75,9 @@ export default function AudioVisual({
       0.4,
       0.85
     );
-    bloomPass.threshold = 0;
-    bloomPass.strength = 1.5;
-    bloomPass.radius = 0;
+    bloomPass.threshold = 0.1;
+    bloomPass.strength = 5;
+    bloomPass.radius = 0.1;
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -112,7 +117,7 @@ export default function AudioVisual({
           continue;
         }
 
-        cubes[i].scale.set(scale, scale, scale);
+        cubes[i].scale.set(2 - scale, scale, 10 - scale);
 
         // Adjust the bloom strength based on the average frequency value
         const intensity = average / 256; // Adjust the divisor to control the intensity
@@ -144,5 +149,5 @@ export default function AudioVisual({
     }
   }, [playAudio]);
 
-  return <div ref={containerRef} className="absolute inset-0"></div>;
+  return <div ref={containerRef}></div>;
 }

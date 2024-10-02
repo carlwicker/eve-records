@@ -26,24 +26,17 @@ export default function Page() {
 
   return (
     <div
-      className="absolute min-h-screen w-screen container mx-auto text-9xl text-neutral-200 font-semibold"
+      className=" min-h-[100vh] w-screen text-9xl text-neutral-200 font-semibold"
       data-scroll-container
     >
       <div className="absolute inset-0 z-0">
         <AudioVisual audioContext={audioContext} playAudio={playAudio} />
       </div>
-      <div className="bg-black h-screen w-screen flex justify-center items-center">
+      <div className="bg-black h-[100vh] w-screen flex justify-center items-center">
         {!playAudio && (
           <button
+            className="p-5 bg-red-900 text-[#EEE] relative z-10 text-2xl"
             onClick={handlePlay}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#3b82f6',
-              color: '#ffffff',
-              borderRadius: '0.375rem',
-              fontSize: '1.5rem',
-            }}
-            className="relative z-10"
           >
             Enter Site
           </button>
