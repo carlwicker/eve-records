@@ -93,7 +93,7 @@ export default function AudioVisual({
     const centralCube = cubes[centralCubeIndex];
 
     // Position camera and point
-    camera.position.set(15, 25, 35);
+    camera.position.set(15, -15, 15);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Bloom effect setup
@@ -104,9 +104,9 @@ export default function AudioVisual({
       0.4,
       0.85
     );
-    bloomPass.threshold = 0.6;
-    bloomPass.strength = 0.8;
-    bloomPass.radius = 1;
+    bloomPass.threshold = 0.1;
+    bloomPass.strength = 1.2;
+    bloomPass.radius = 0.9;
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -139,7 +139,7 @@ export default function AudioVisual({
 
         const average =
           segment.reduce((sum, value) => sum + value, 0) / segment.length;
-        const scale = average / 20; // Adjust the divisor to control the scaling effect
+        const scale = average / 50; // Adjust the divisor to control the scaling effect
 
         if (isNaN(scale)) {
           console.error(`Scale for cube ${i} is NaN`);
