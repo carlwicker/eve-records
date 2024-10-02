@@ -1,4 +1,8 @@
 import './global.css';
+import { Inter } from 'next/font/google';
+import 'locomotive-scroll/dist/locomotive-scroll.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Welcome to eve-records',
@@ -12,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body
+        className={`${inter.className} bg-neutral-950 text-neutral-200 tracking-tighter py-40`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
