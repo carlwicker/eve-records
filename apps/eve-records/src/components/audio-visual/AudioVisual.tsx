@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 interface AudioVisualProps {
   audioContext: AudioContext | null;
@@ -19,13 +21,42 @@ export default function AudioVisual({
   useEffect(() => {
     if (!audioContext) return;
 
+    // Load the font
+    const fontLoader = new FontLoader();
+    fontLoader.load('/path/to/font.json', (font) => {
+      const textGeometry = new TextGeometry('three the mind', {
+        font: font,
+        size: 5,
+        height: 1,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.5,
+        bevelSize: 0.3,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+
+      const textMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xff0000, // Emissive color for glow effect
+        emissiveIntensity: 10, // Adjust intensity as needed
+      });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+      // Position the text at a cool angle
+      textMesh.position.set(0, 0, 0);
+      textMesh.rotation.set(0, Math.PI / 4, 0);
+
+      scene.add(textMesh);
+    });
+
     // Set up the scene, camera, and renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      75,
+      25,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      50
     );
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -48,11 +79,11 @@ export default function AudioVisual({
     for (let i = 0; i < numCubes; i++) {
       const geometry = new THREE.BoxGeometry();
       const material = new THREE.MeshStandardMaterial({
-        color: 0x00ff00,
+        color: 0xff0000,
         emissive: 0x000000,
       });
       const cube = new THREE.Mesh(geometry, material);
-      cube.position.x = i * 2 - totalWidth; // Center the group of cubes
+      cube.position.x = i * 2 - totalWidth / 2; // Center the group of cubes
       scene.add(cube);
       cubes.push(cube);
     }
@@ -61,13 +92,11 @@ export default function AudioVisual({
     const centralCubeIndex = Math.floor(numCubes / 2);
     const centralCube = cubes[centralCubeIndex];
 
-    // Position the camera and point it at the central cube
-    camera.position.z = 0;
-    camera.position.y = 0.3;
-    camera.position.x = centralCube.position.x - -10;
+    // Position camera and point
+    camera.position.set(15, 25, 35);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    // Set up the bloom effect
+    // Bloom effect setup
     const renderScene = new RenderPass(scene, camera);
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -75,16 +104,16 @@ export default function AudioVisual({
       0.4,
       0.85
     );
-    bloomPass.threshold = 0.1;
-    bloomPass.strength = 5;
-    bloomPass.radius = 0.1;
+    bloomPass.threshold = 0.6;
+    bloomPass.strength = 0.8;
+    bloomPass.radius = 1;
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
     // Load the audio
-    const audio = new Audio('/mp3/littleraver.mp3');
+    const audio = new Audio('/mp3/1.mp3');
     audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
     const source = audioContext.createMediaElementSource(audio);
@@ -110,14 +139,14 @@ export default function AudioVisual({
 
         const average =
           segment.reduce((sum, value) => sum + value, 0) / segment.length;
-        const scale = average / 40; // Adjust the divisor to control the scaling effect
+        const scale = average / 20; // Adjust the divisor to control the scaling effect
 
         if (isNaN(scale)) {
           console.error(`Scale for cube ${i} is NaN`);
           continue;
         }
 
-        cubes[i].scale.set(2 - scale, scale, 10 - scale);
+        cubes[i].scale.set(scale - 0.5, scale, scale);
 
         // Adjust the bloom strength based on the average frequency value
         const intensity = average / 256; // Adjust the divisor to control the intensity
