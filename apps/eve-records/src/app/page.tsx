@@ -68,6 +68,13 @@ export default function Page() {
           title="Take That"
           playAudio={playAudio}
         />
+
+        <TrackButton
+          handlePlay={() => handlePlay(4)}
+          artist="Closer Musik"
+          title="One Two Three No Gravity"
+          playAudio={playAudio}
+        />
       </div>
     </div>
   );

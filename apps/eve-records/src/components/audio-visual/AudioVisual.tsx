@@ -24,7 +24,7 @@ export default function AudioVisual({
     // Set up the scene, camera, and renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      25,
+      20,
       window.innerWidth / window.innerHeight,
       0.1,
       50
@@ -35,12 +35,12 @@ export default function AudioVisual({
 
     // Set up the audio analyser
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 256;
+    analyser.fftSize = 1024;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
     // Create cubes for different frequency ranges
-    const numCubes = 5; // Number of cubes
+    const numCubes = 10; // Number of cubes
     const cubes: any = [];
     const segmentSize = Math.floor(bufferLength / numCubes);
 
@@ -54,7 +54,7 @@ export default function AudioVisual({
         emissive: 0x000000,
       });
       const cube = new THREE.Mesh(geometry, material);
-      cube.position.x = i * 2 - totalWidth / 2; // Center the group of cubes
+      cube.position.x = i - totalWidth / 2; // Center the group of cubes
       cube.position.y = 0;
       scene.add(cube);
       cubes.push(cube);
@@ -65,9 +65,9 @@ export default function AudioVisual({
     const centralCube = cubes[centralCubeIndex];
 
     // Position camera and point
-    camera.position.set(6, 6, -6);
+    camera.position.set(0, 10, 10);
     if (centralCube) {
-      camera.lookAt(centralCube.position);
+      camera.lookAt(new THREE.Vector3(-7, 0, 0));
     } else {
       console.error('Central cube not found');
     }
@@ -80,9 +80,9 @@ export default function AudioVisual({
       0.4,
       0.85
     );
-    bloomPass.threshold = 0.05;
-    bloomPass.strength = 0.5;
-    bloomPass.radius = 0.2;
+    bloomPass.threshold = 0.1;
+    bloomPass.strength = 0.9;
+    bloomPass.radius = 0.8;
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -115,17 +115,17 @@ export default function AudioVisual({
 
         const average =
           segment.reduce((sum, value) => sum + value, 0) / segment.length;
-        const scale = average / 75; // Adjust the divisor to control the scaling effect
+        const scale = average / 280; // Adjust the divisor to control the scaling effect
 
         if (isNaN(scale)) {
           console.error(`Scale for cube ${i} is NaN`);
           continue;
         }
 
-        cubes[i].scale.set(scale, scale, scale); // Adjust the z scale to make the cubes taller
+        cubes[i].scale.set(scale * 2, scale * 2, scale * 2); // Adjust the z scale to make the cubes taller
 
         // Adjust the bloom strength based on the average frequency value
-        const intensity = average / 90; // Adjust the divisor to control the intensity
+        const intensity = average / 130; // Adjust the divisor to control the intensity
         cubes[i].material.emissive = new THREE.Color(
           intensity,
           intensity,
