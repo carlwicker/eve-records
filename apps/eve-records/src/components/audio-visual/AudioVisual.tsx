@@ -3,52 +3,23 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 interface AudioVisualProps {
   audioContext: AudioContext | null;
   playAudio: boolean;
+  trackNumber: number;
 }
 
 export default function AudioVisual({
   audioContext,
   playAudio,
+  trackNumber,
 }: AudioVisualProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!audioContext) return;
-
-    // Load the font
-    const fontLoader = new FontLoader();
-    fontLoader.load('/path/to/font.json', (font) => {
-      const textGeometry = new TextGeometry('three the mind', {
-        font: font,
-        size: 5,
-        height: 1,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 0.5,
-        bevelSize: 0.3,
-        bevelOffset: 0,
-        bevelSegments: 5,
-      });
-
-      const textMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0xff0000, // Emissive color for glow effect
-        emissiveIntensity: 10, // Adjust intensity as needed
-      });
-      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-
-      // Position the text at a cool angle
-      textMesh.position.set(0, 0, 0);
-      textMesh.rotation.set(0, Math.PI / 4, 0);
-
-      scene.add(textMesh);
-    });
 
     // Set up the scene, camera, and renderer
     const scene = new THREE.Scene();
@@ -69,7 +40,7 @@ export default function AudioVisual({
     const dataArray = new Uint8Array(bufferLength);
 
     // Create cubes for different frequency ranges
-    const numCubes = 10; // Number of cubes
+    const numCubes = 5; // Number of cubes
     const cubes: any = [];
     const segmentSize = Math.floor(bufferLength / numCubes);
 
@@ -84,6 +55,7 @@ export default function AudioVisual({
       });
       const cube = new THREE.Mesh(geometry, material);
       cube.position.x = i * 2 - totalWidth / 2; // Center the group of cubes
+      cube.position.y = 0;
       scene.add(cube);
       cubes.push(cube);
     }
@@ -93,27 +65,31 @@ export default function AudioVisual({
     const centralCube = cubes[centralCubeIndex];
 
     // Position camera and point
-    camera.position.set(15, -15, 15);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.position.set(6, 6, -6);
+    if (centralCube) {
+      camera.lookAt(centralCube.position);
+    } else {
+      console.error('Central cube not found');
+    }
 
     // Bloom effect setup
     const renderScene = new RenderPass(scene, camera);
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5,
+      0.5,
       0.4,
       0.85
     );
-    bloomPass.threshold = 0.1;
-    bloomPass.strength = 1.2;
-    bloomPass.radius = 0.9;
+    bloomPass.threshold = 0.05;
+    bloomPass.strength = 0.5;
+    bloomPass.radius = 0.2;
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
     // Load the audio
-    const audio = new Audio('/mp3/1.mp3');
+    const audio = new Audio('/mp3/' + trackNumber + '.mp3');
     audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
     const source = audioContext.createMediaElementSource(audio);
@@ -139,17 +115,17 @@ export default function AudioVisual({
 
         const average =
           segment.reduce((sum, value) => sum + value, 0) / segment.length;
-        const scale = average / 50; // Adjust the divisor to control the scaling effect
+        const scale = average / 75; // Adjust the divisor to control the scaling effect
 
         if (isNaN(scale)) {
           console.error(`Scale for cube ${i} is NaN`);
           continue;
         }
 
-        cubes[i].scale.set(scale - 0.5, scale, scale);
+        cubes[i].scale.set(scale, scale, scale); // Adjust the z scale to make the cubes taller
 
         // Adjust the bloom strength based on the average frequency value
-        const intensity = average / 256; // Adjust the divisor to control the intensity
+        const intensity = average / 90; // Adjust the divisor to control the intensity
         cubes[i].material.emissive = new THREE.Color(
           intensity,
           intensity,
@@ -176,7 +152,20 @@ export default function AudioVisual({
         console.error('Autoplay failed:', error);
       });
     }
-  }, [playAudio]);
+  }, [playAudio, trackNumber]);
 
-  return <div ref={containerRef}></div>;
+  return (
+    <div ref={containerRef} className="flex align-middle justify-center">
+      {trackNumber !== 0 && (
+        <button
+          className="absolute top-0 left-0 flex  items-center p-5 bg-red-900 text-[#EEE] text-2xl"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          Back
+        </button>
+      )}
+    </div>
+  );
 }
