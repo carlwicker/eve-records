@@ -19,14 +19,14 @@ export default function TrackButton({
   return (
     <>
       {!playAudio && (
-        <button
-          className="p-5 bg-red-900 text-[#EEE] relative z-10"
+        <div
+          className="p-5 bg-red-800 text-[#EEE] text-sm relative z-10 hover:bg-red-900 w-full uppercase"
           onClick={() => {
             handlePlay(trackNumber);
           }}
         >
-          Track {trackNumber}: {artist} - {title}
-        </button>
+          {artist}
+        </div>
       )}
     </>
   );

@@ -21,7 +21,6 @@ export default function Page() {
 
   useEffect(() => {
     setTrackNumber(0);
-    console.log('Track number:', trackNumber);
   }, []);
 
   const handlePlay = (track: number) => {
@@ -34,7 +33,7 @@ export default function Page() {
 
   return (
     <div
-      className=" min-h-[100vh] w-screen text-neutral-200 font-semibold"
+      className=" min-h-[100vh] w-screen text-neutral-200 font-semibold bg-black"
       data-scroll-container
     >
       <div className="absolute inset-0 z-0">
@@ -44,8 +43,11 @@ export default function Page() {
           trackNumber={trackNumber}
         />
       </div>
-      <div className="bg-black h-[100vh] w-screen flex justify-center items-center flex-col gap-5">
-        <div className="">Live Audio Freqency Analysis Test with ThreeJS</div>
+      <div className="h-[100vh]  md:w-1/2 flex justify-center  flex-col gap-5 p-5 mx-auto ">
+        <div className="uppercase text-3xl md:w-1/2">
+          Realtime audio frequency Analysis Performance Tests
+        </div>
+
         <TrackButton
           handlePlay={() => handlePlay(1)}
           artist="Dj Vadim"
