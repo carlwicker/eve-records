@@ -1,4 +1,4 @@
-# EveRecords
+# Eve Records
 
 https://eve-records.vercel.app
 
