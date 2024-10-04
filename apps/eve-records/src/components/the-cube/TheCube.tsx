@@ -22,7 +22,7 @@ export default function TheCube() {
     audioContextRef.current = audioContext;
 
     // Create and configure audio element
-    const audio = new Audio('/mp3/1.mp3');
+    const audio = new Audio('/mp3/2.mp3');
     audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
 
@@ -105,7 +105,7 @@ export default function TheCube() {
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.5, // initial strength
-      0.4, // radius
+      0.5, // radius
       0.2 // threshold
     );
     composer.addPass(bloomPass);
@@ -115,7 +115,7 @@ export default function TheCube() {
     composer.addPass(glitchPass);
 
     // Timer for random glitch effect
-    let glitchTimer = 0;
+    let glitchTimer = 5;
 
     // Animation loop
     const animate = () => {
@@ -137,7 +137,7 @@ export default function TheCube() {
         bloomPass.strength = (scale * average) / 150; // Adjust the multiplier as needed
 
         // Adjust the glitch effect based on the audio frequency
-        glitchPass.goWild = average > 16; // Enable "wild" glitch effect if average frequency is high
+        glitchPass.goWild = average > 50; // Enable "wild" glitch effect if average frequency is high
       }
 
       // Rotate the cube
