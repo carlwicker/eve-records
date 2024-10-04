@@ -33,11 +33,16 @@ export default function AudioVisual({
     renderer.setSize(window.innerWidth, window.innerHeight);
     containerRef.current?.appendChild(renderer.domElement);
 
-    // Set up the audio analyser
+    // Load the audio
+    const audio = new Audio('/mp3/' + trackNumber + '.mp3');
+    audio.crossOrigin = 'anonymous';
+    audioRef.current = audio;
+    const source = audioContext.createMediaElementSource(audio);
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 1024;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
 
     // Create cubes for different frequency ranges
     const numCubes = 10; // Number of cubes
@@ -87,14 +92,6 @@ export default function AudioVisual({
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
-
-    // Load the audio
-    const audio = new Audio('/mp3/' + trackNumber + '.mp3');
-    audio.crossOrigin = 'anonymous';
-    audioRef.current = audio;
-    const source = audioContext.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
 
     // Animation loop
     const animate = () => {

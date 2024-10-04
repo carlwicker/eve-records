@@ -1,81 +1,16 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import AudioVisual from '../components/audio-visual/AudioVisual'; // Adjust the import path as necessary
-import TrackButton from '../components/track-button/TrackButton';
+import Link from 'next/link';
 
 export default function Page() {
-  const scrollRef = useRef(null);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [playAudio, setPlayAudio] = useState(false);
-  const [trackNumber, setTrackNumber] = useState(0);
-
-  useEffect(() => {
-    const raf = () => {
-      // Your animation logic here
-      requestAnimationFrame(raf);
-    };
-
-    requestAnimationFrame(raf);
-  }, []);
-
-  useEffect(() => {
-    setTrackNumber(0);
-  }, []);
-
-  const handlePlay = (track: number) => {
-    setTrackNumber(track);
-    const context = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-    setAudioContext(context);
-    setPlayAudio(true);
-  };
-
   return (
-    <div
-      className=" min-h-[100vh] w-screen text-neutral-200 font-semibold bg-black"
-      data-scroll-container
-    >
-      <div className="absolute inset-0 z-0">
-        <AudioVisual
-          audioContext={audioContext}
-          playAudio={playAudio}
-          trackNumber={trackNumber}
-        />
-      </div>
-      <div className="h-[100vh]  md:w-1/2 flex justify-center  flex-col gap-5 p-5 mx-auto ">
-        <div className="uppercase text-3xl md:w-1/2">
-          Realtime audio frequency Analysis Performance Tests
-        </div>
-
-        <TrackButton
-          handlePlay={() => handlePlay(1)}
-          artist="Dj Vadim"
-          title="The Larry Chatsworth Theme"
-          playAudio={playAudio}
-        />
-
-        <TrackButton
-          handlePlay={() => handlePlay(2)}
-          artist="Superpitcher"
-          title="Little Raver"
-          playAudio={playAudio}
-        />
-
-        <TrackButton
-          handlePlay={() => handlePlay(3)}
-          artist="Jurgen Pappe"
-          title="Take That"
-          playAudio={playAudio}
-        />
-
-        <TrackButton
-          handlePlay={() => handlePlay(4)}
-          artist="Closer Musik"
-          title="One Two Three No Gravity"
-          playAudio={playAudio}
-        />
-      </div>
+    <div className="flex flex-col gap-5 tracking-tighter font-semibold text-2xl capitalize h-screen w-screen justify-center items-center text-white">
+      <button className="bg-red-800 p-5 hover:bg-red-900">
+        <Link href="/eq">Realtime Audio Processing Test</Link>
+      </button>
+      <button className="bg-red-800 p-5 hover:bg-red-900">
+        <Link href="/glitch">ThreeJS GlitchPass Tests</Link>
+      </button>
     </div>
   );
 }
